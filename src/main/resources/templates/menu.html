@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>メニュー</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <th:block th:insert="/common/header"></th:block>
+
+    <div>
+        <span th:if="${session.user.role == 1}">
+            <button>新規追加</button>
+        </span>
+        <span>
+            <button>マイページ</button>
+        </span>
+    </div>
+
+    <form action="/menu">
+        <div>
+            <input type="text" name="keyword" placeholder="キーワード検索">
+            <input type="submit">
+        </div>
+    </form>
+
+    <div>
+        <span th:each="levels : ${levels}">
+            <label th:for="${levels.id}">
+                <input type="radio" th:id="${levels.id}" name="level"  th:text="${levels.level}">
+            </label>
+        </span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>曲名</th>
+                <th>ジャンル</th>
+                <th>詳細</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="song : ${songs}">
+                <td th:text="${song.name}"></td>
+                <td th:id="${song.genreId}" th:text="${song.genre}"></td>
+                <td><a th:href="@{/detail/{id} (id = ${song.id})}">詳細</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</body>
+</html>
