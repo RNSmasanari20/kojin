@@ -11,7 +11,7 @@
 
     <div>
         <span th:if="${session.user.role == 1}">
-            <button>新規追加</button>
+            <button><a th:href="@{/insert}">新規追加</a></button>
         </span>
         <span>
             <button>マイページ</button>
@@ -28,7 +28,7 @@
     <div>
         <span th:each="levels : ${levels}">
             <label th:for="${levels.id}">
-                <input type="radio" th:id="${levels.id}" name="level"  th:text="${levels.level}">
+                <input type="radio" th:id="${levels.id}" name="level" th:value="${levels.id}" th:text="${levels.level}" checked>
             </label>
         </span>
     </div>
@@ -38,14 +38,14 @@
             <tr>
                 <th>曲名</th>
                 <th>ジャンル</th>
-                <th>詳細</th>
+                <th th:if="${session.user.role == 1}">詳細</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="song : ${songs}">
-                <td th:text="${song.name}"></td>
+                <td><a th:href="@{https://donderhiroba.jp/score_detail.php?song_no={songId}&level=4&genre={genreId} (songId = ${song.songId}, genreId = ${song.genreId})}" th:text="${song.name}" target="_blank"></a></td>
                 <td th:id="${song.genreId}" th:text="${song.genre}"></td>
-                <td><a th:href="@{/detail/{id} (id = ${song.id})}">詳細</a></td>
+                <td th:if="${session.user.role == 1}"><a th:href="@{/detail/{id} (id = ${song.id})}">詳細</a></td>
             </tr>
         </tbody>
     </table>

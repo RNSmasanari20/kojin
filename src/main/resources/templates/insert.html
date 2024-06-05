@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>新規追加</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<th:block th:insert="/common/header"></th:block>
+
+<p th:text="${message}"></p>
+<form action="/insert" method="post" th:object="${insert}">
+    <fieldset>
+        <div>
+            <label>
+                曲名：
+                <input type="text" th:field="*{song}">
+                <span th:each="error: ${#fields.errors('song')}">[[ ${error} ]]</span>
+            </label>
+        </div>
+        <div>
+            <label>
+                曲id：
+                <input type="text" th:field="*{songId}">
+                <span th:each="error: ${#fields.errors('songId')}">[[ ${error} ]]</span>
+            </label>
+        </div>
+        <div>
+            <label>
+                ジャンル：
+                <select th:field="*{id}">
+                    <option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.genre}"></option>
+                </select>
+            </label>
+        </div>
+    </fieldset>
+    <button type="submit" >登録</button>
+    <input type="button" onclick="location.href='/menu'" value="戻る">
+</form>
+
+
+</body>
+</html>

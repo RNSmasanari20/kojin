@@ -1,5 +1,7 @@
 package com.example.kojin;
 
+import com.example.kojin.form.EditForm;
+import com.example.kojin.form.InsertForm;
 import com.example.kojin.form.LoginForm;
 import com.example.kojin.form.SearchForm;
 import com.example.kojin.service.genre.IGenreService;
@@ -42,6 +44,24 @@ public class KojinApplication {
 
 //		var list = songsService.findSong("ア");
 //		list.forEach(System.out::println);
+
+//        InsertForm insertForm = new InsertForm();
+//        insertForm.setId(6);
+//        insertForm.setSong("テスト用ソング");
+//        insertForm.setSongId("765");
+//        System.out.println(songsService.insertSong(insertForm));
+
+//        System.out.println(songsService.findById(2));
+
+//        EditForm editForm = new EditForm();
+//        editForm.setId(17);
+//        editForm.setName("第六天魔王");
+//        editForm.setSongId("765");
+//        editForm.setGenreId(6);
+//        System.out.println(songsService.updateSong(editForm));
+
+//        System.out.println(songsService.deleteSong(17));
+
     }
 
 }
