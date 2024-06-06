@@ -14,7 +14,7 @@
             <button><a th:href="@{/insert}">新規追加</a></button>
         </span>
         <span>
-            <button>マイページ</button>
+            <button><a th:href="@{/mypage}">マイページ</a></button>
         </span>
     </div>
 
@@ -28,7 +28,7 @@
     <div>
         <span th:each="levels : ${levels}">
             <label th:for="${levels.id}">
-                <input type="radio" th:id="${levels.id}" name="level" th:value="${levels.id}" th:text="${levels.level}" checked>
+                <input type="radio" th:id="${levels.id}" name="level" th:value="${levels.id}" th:text="${levels.level}" checked onchange="func()">
             </label>
         </span>
     </div>
@@ -43,13 +43,31 @@
         </thead>
         <tbody>
             <tr th:each="song : ${songs}">
-                <td><a th:href="@{https://donderhiroba.jp/score_detail.php?song_no={songId}&level=4&genre={genreId} (songId = ${song.songId}, genreId = ${song.genreId})}" th:text="${song.name}" target="_blank"></a></td>
+                <td><a class="link" th:href="@{https://donderhiroba.jp/score_detail.php?song_no={songId}&level=4&genre={genreId} (songId = ${song.songId}, genreId = ${song.genreId})}" th:text="${song.name}" target="_blank"></a></td>
                 <td th:id="${song.genreId}" th:text="${song.genre}"></td>
                 <td th:if="${session.user.role == 1}"><a th:href="@{/detail/{id} (id = ${song.id})}">詳細</a></td>
             </tr>
         </tbody>
     </table>
 
+<script>
+    let checkValue = '';
+    function func() {
+        var getLblId = document.getElementsByName("level");
+        for(var i = 0; i < getLblId.length; i++){
+            if(getLblId[i].checked) {
+            checkValue = getLblId[i].value;
+            }
+        }
+        let getLink = document.getElementsByClassName('link');
+        for(let l of getLink){
+            let tekito = (l.getAttribute('href').split('level='));
+            l.setAttribute('href',tekito[0]+'level='+checkValue+tekito[1].slice(1));
+        }
+    }
+
+
+</script>
 
 </body>
 </html>

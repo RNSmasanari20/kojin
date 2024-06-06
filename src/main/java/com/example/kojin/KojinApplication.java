@@ -1,5 +1,6 @@
 package com.example.kojin;
 
+import com.example.kojin.entity.UserRecord;
 import com.example.kojin.form.EditForm;
 import com.example.kojin.form.InsertForm;
 import com.example.kojin.form.LoginForm;
@@ -62,6 +63,8 @@ public class KojinApplication {
 
 //        System.out.println(songsService.deleteSong(17));
 
+//        UserRecord userRecord = new UserRecord(2,"002","pass02","ユーザー2",2);
+//        System.out.println(userService.updateUser(userRecord));
     }
 
 }

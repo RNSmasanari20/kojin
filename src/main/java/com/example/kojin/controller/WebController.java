@@ -1,10 +1,12 @@
 package com.example.kojin.controller;
 
+import com.example.kojin.entity.EditRecord;
 import com.example.kojin.entity.SongDateRecord;
 import com.example.kojin.entity.UserRecord;
 import com.example.kojin.form.EditForm;
 import com.example.kojin.form.InsertForm;
 import com.example.kojin.form.LoginForm;
+import com.example.kojin.form.UserForm;
 import com.example.kojin.service.genre.GenreService;
 import com.example.kojin.service.level.LevelService;
 import com.example.kojin.service.song.SongService;
@@ -38,9 +40,13 @@ public class WebController {
     private HttpSession session;
 
     String successMessage;
+    String errorMessage;
 
     @GetMapping("/login")
-    public String login(@ModelAttribute("login") LoginForm loginForm) {
+    public String login(@ModelAttribute("login") LoginForm loginForm, Model model) {
+        String message = errorMessage;
+        errorMessage = "";
+        model.addAttribute("message", message);
         return "login";
     }
 
@@ -51,7 +57,10 @@ public class WebController {
             return "login";
         }
         if (userRecord == null) {
-            model.addAttribute("message", "IDまたはパスワードが不正です");
+            errorMessage = "IDまたはパスワードが不正です";
+            String message = errorMessage;
+            errorMessage = "";
+            model.addAttribute("message", message);
             return "login";
         }
         session.setAttribute("user", userRecord);
@@ -131,7 +140,13 @@ public class WebController {
             return "detail";
         } else if (isUpdate == 0) {
             model.addAttribute("message", "更新に失敗しました");
-            model.addAttribute("edit", songService.findById(id));
+            EditRecord editRecord = songService.findById(id);
+            if (editRecord != null) {
+                model.addAttribute("edit", editRecord);
+            } else {
+                successMessage = "不正なアクセスを検知しました";
+                return "redirect:/success";
+            }
             model.addAttribute("genres", genreService.findAll());
             return "detail";
         }
@@ -144,8 +159,15 @@ public class WebController {
         int isDelete = songService.deleteSong(id);
         if (isDelete == 0) {
             model.addAttribute("message", "削除に失敗しました");
-            model.addAttribute("edit", songService.findById(id));
+            EditRecord editRecord = songService.findById(id);
+            if (editRecord != null) {
+                model.addAttribute("edit", editRecord);
+            } else {
+                successMessage = "不正なアクセスを検知しました";
+                return "redirect:/success";
+            }
             model.addAttribute("genres", genreService.findAll());
+            model.addAttribute("edit_id", id);
             return "detail";
         }
         successMessage = "削除に成功しました";
@@ -163,4 +185,49 @@ public class WebController {
         return "success";
     }
 
+    @GetMapping("/mypage")
+    public String myPage(@ModelAttribute("mypage") UserForm userForm, Model model) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        UserRecord sessionUserRecord = (UserRecord) session.getAttribute("user");
+        UserRecord userRecord = userService.findUser(sessionUserRecord.id());
+        model.addAttribute("mypage", userRecord);
+        return "mypage";
+    }
+
+    @RequestMapping(value = "/mypage", params = "updateUser", method = RequestMethod.POST)
+    public String myPageUp(@Validated @ModelAttribute("mypage") UserForm userForm, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("mypage", userForm);
+            return "mypage";
+        }
+        int isUpdate = userService.updateUser(userForm);
+        if (isUpdate == -1) {
+            model.addAttribute("message", "そのログインIDはすでに使われています");
+            model.addAttribute("mypage", userForm);
+            return "mypage";
+        } else if (isUpdate == 0) {
+            model.addAttribute("message", "ユーザー情報の更新に失敗しました");
+            model.addAttribute("mypage", userForm);
+            return "mypage";
+        }
+        UserRecord userRecord = userService.findUser(userForm.getId());
+        session.setAttribute("user", userRecord);
+        successMessage = "更新に成功しました";
+        return "redirect:/success";
+    }
+
+    @RequestMapping(value = "/mypage", params = "deleteUser", method = RequestMethod.POST)
+    public String myPageDel(@ModelAttribute("mypage") UserForm userForm, Model model) {
+        int isDelete = userService.deleteUser(userForm.getId());
+        if (isDelete == 0) {
+            model.addAttribute("message", "ユーザーの削除に失敗しました");
+            model.addAttribute("mypage", userForm);
+            return "mypage";
+        }
+        session.invalidate();
+        errorMessage = "ユーザーを削除しました";
+        return "redirect:/login";
+    }
 }
